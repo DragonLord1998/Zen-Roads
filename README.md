@@ -1,5 +1,5 @@
 # Zen-Roads
-A procedurally generated driving simulator purely built using Chat GPT
+A procedurally generated driving simulator 
 The Application utilized WebGPU to run 3D modeling sim driving 
 
 Zen Roads - To-Do List
