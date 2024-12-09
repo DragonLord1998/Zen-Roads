@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Babylon.js Car with Physics</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: #444;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    
+    <!-- Load Ammo.js first -->
+    <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <!-- Load Babylon.js -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    
+    <!-- Load our custom JS files -->
+    <script type="module" src="./src/controls.js"></script>
+<script type="module" src="./src/car.js"></script>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>
