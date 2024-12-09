@@ -1,11 +1,10 @@
 // car.js
-// This module is responsible for creating the car, setting up its physics, and updating its motion.
+// This module is responsible for creating the car, its wheels, and updating their motion.
 
 import { keys } from './controls.js';
 
 let carBody; // The car mesh
-let camera; // The third-person follow camera
-
+let wheels = []; // Array to store wheel meshes
 const forwardDir = new BABYLON.Vector3(0, 0, 1);
 
 // Movement parameters
@@ -32,9 +31,7 @@ function createCar(scene) {
         scene
     );
 
-    // Add wheels (visual only)
-    const wheelMat = new BABYLON.StandardMaterial("wheelMat", scene);
-    wheelMat.diffuseColor = BABYLON.Color3.Black();
+    // Add wheels
     const wheelPositions = [
         new BABYLON.Vector3(1, -0.2, 1.5),
         new BABYLON.Vector3(-1, -0.2, 1.5),
@@ -42,13 +39,49 @@ function createCar(scene) {
         new BABYLON.Vector3(-1, -0.2, -1.5),
     ];
     for (let i = 0; i < wheelPositions.length; i++) {
-        const wheel = BABYLON.MeshBuilder.CreateCylinder("wheel" + i, { diameter: 0.5, height: 0.2 }, scene);
-        wheel.material = wheelMat;
+        const wheel = createWheel(scene);
         wheel.position = wheelPositions[i];
-        wheel.parent = carBody;
+        wheel.rotation.z = Math.PI / 2; // Rotate wheels to align with the car
+        wheel.parent = carBody; // Attach to the car body
+        wheels.push(wheel);
     }
 
     return carBody;
+}
+
+function createWheel(scene) {
+    // Create the tire (outer cylinder)
+    const tire = BABYLON.MeshBuilder.CreateCylinder("tire", { diameter: 0.6, height: 0.2, tessellation: 24 }, scene);
+    const tireMat = new BABYLON.StandardMaterial("tireMat", scene);
+    tireMat.diffuseColor = BABYLON.Color3.Black(); // Black for the tire
+    tire.material = tireMat;
+
+    // Create the rim (inner torus)
+    const rim = BABYLON.MeshBuilder.CreateTorus("rim", { diameter: 0.5, thickness: 0.08, tessellation: 24 }, scene);
+    const rimMat = new BABYLON.StandardMaterial("rimMat", scene);
+    rimMat.diffuseColor = BABYLON.Color3.Gray(); // Gray for the rim
+    rim.material = rimMat;
+    rim.parent = tire; // Attach the rim to the tire
+
+    // Offset the rim slightly to make it visible inside the tire
+    rim.position.y = 0.01;
+
+    // Add spokes to the rim
+    const spokeCount = 8; // Increase the number of spokes for better detail
+    for (let i = 0; i < spokeCount; i++) {
+        const spoke = BABYLON.MeshBuilder.CreateBox("spoke", { width: 0.05, height: 0.05, depth: 0.4 }, scene);
+        const spokeMat = new BABYLON.StandardMaterial("spokeMat", scene);
+        spokeMat.diffuseColor = BABYLON.Color3.Gray(); // Gray spokes
+        spoke.material = spokeMat;
+
+        // Rotate and position the spokes evenly around the rim
+        spoke.rotation.z = (Math.PI * 2 * i) / spokeCount;
+        spoke.position.x = Math.cos((Math.PI * 2 * i) / spokeCount) * 0.25; // Offset from center
+        spoke.position.z = Math.sin((Math.PI * 2 * i) / spokeCount) * 0.25; // Offset from center
+        spoke.parent = rim; // Attach to the rim
+    }
+
+    return tire; // Return the entire wheel assembly
 }
 
 function updateCarMotion() {
@@ -59,9 +92,9 @@ function updateCarMotion() {
     }
 
     // Smooth acceleration and deceleration
-    if (keys.forward) {
+    if (keys.backward) { // Inverted: Backward key increases forward speed
         currentSpeed = Math.min(currentSpeed + acceleration, maxSpeed);
-    } else if (keys.backward) {
+    } else if (keys.forward) { // Inverted: Forward key decreases speed (reverse)
         currentSpeed = Math.max(currentSpeed - acceleration, -maxSpeed / 2); // Reverse speed limit
     } else {
         currentSpeed *= drag; // Apply drag when no keys are pressed
@@ -86,10 +119,16 @@ function updateCarMotion() {
     const angularVel = carBody.physicsImpostor.getAngularVelocity().clone();
     angularVel.y = currentSteering * 5; // Apply steering as angular velocity
     carBody.physicsImpostor.setAngularVelocity(angularVel);
+
+    // Spin the wheels based on the car's speed
+    const wheelRotationSpeed = currentSpeed / (Math.PI * 0.6); // Adjust rotation based on speed and wheel size
+    wheels.forEach((wheel) => {
+        wheel.rotation.x += wheelRotationSpeed; // Spin the wheel along the X-axis
+    });
 }
 
 function attachThirdPersonCamera(scene) {
-    camera = new BABYLON.FollowCamera("FollowCamera", new BABYLON.Vector3(0, 5, -10), scene);
+    const camera = new BABYLON.FollowCamera("FollowCamera", new BABYLON.Vector3(0, 5, -10), scene);
     camera.radius = 10; // Distance from the car
     camera.heightOffset = 4; // Height above the car
     camera.rotationOffset = 0; // Angle to the car
