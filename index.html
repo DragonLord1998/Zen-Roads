@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Babylon.js Car with Physics</title>
     <style>
         html, body {
@@ -18,108 +18,21 @@
             touch-action: none;
             display: block;
         }
-        #controls {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-        button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 18px;
-            background-color: #222;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:active {
-            background-color: #555;
-        }
     </style>
 </head>
 <body>
     <canvas id="renderCanvas"></canvas>
-    <!-- Load Babylon.js libraries -->
     <script src="https://preview.babylonjs.com/babylonjs.loaders.min.js"></script>
+    <!-- Load Ammo.js first -->
     <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <!-- Load Babylon.js -->
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
+ 
     <script src="https://preview.babylonjs.com/pathTracing/babylon.pathtracing.min.js"></script>
-
-    <!-- Load custom JS files -->
+    
+    <!-- Load our custom JS files -->
     <script type="module" src="/src/controls.js"></script>
     <script type="module" src="/src/car.js"></script>
     <script type="module" src="/src/app.js"></script>
-    <!-- On-screen controls -->
-    <div id="controls">
-        <button id="btn-forward">Forward</button>
-        <button id="btn-backward">Backward</button>
-        <button id="btn-left">Left</button>
-        <button id="btn-right">Right</button>
-    </div>
-    
-    <style>
-        #controls {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-        }
-        button {
-            margin: 5px;
-            padding: 15px;
-            font-size: 18px;
-            background-color: #444;
-            color: white;
-            border: 1px solid #888;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:active {
-            background-color: #666;
-        }
-    </style>
-    
-    <script type="module">
-        import { keys } from './src/controls.js';
-    
-        const btnForward = document.getElementById("btn-forward");
-        const btnBackward = document.getElementById("btn-backward");
-        const btnLeft = document.getElementById("btn-left");
-        const btnRight = document.getElementById("btn-right");
-    
-        function handleButtonPress(key, isPressed) {
-            keys[key] = isPressed;
-            console.log(`Button ${key}: ${isPressed}`, keys); // Debugging
-        }
-    
-        btnForward.addEventListener("mousedown", () => handleButtonPress("forward", true));
-        btnForward.addEventListener("mouseup", () => handleButtonPress("forward", false));
-        btnForward.addEventListener("touchstart", () => handleButtonPress("forward", true));
-        btnForward.addEventListener("touchend", () => handleButtonPress("forward", false));
-    
-        btnBackward.addEventListener("mousedown", () => handleButtonPress("backward", true));
-        btnBackward.addEventListener("mouseup", () => handleButtonPress("backward", false));
-        btnBackward.addEventListener("touchstart", () => handleButtonPress("backward", true));
-        btnBackward.addEventListener("touchend", () => handleButtonPress("backward", false));
-    
-        btnLeft.addEventListener("mousedown", () => handleButtonPress("left", true));
-        btnLeft.addEventListener("mouseup", () => handleButtonPress("left", false));
-        btnLeft.addEventListener("touchstart", () => handleButtonPress("left", true));
-        btnLeft.addEventListener("touchend", () => handleButtonPress("left", false));
-    
-        btnRight.addEventListener("mousedown", () => handleButtonPress("right", true));
-        btnRight.addEventListener("mouseup", () => handleButtonPress("right", false));
-        btnRight.addEventListener("touchstart", () => handleButtonPress("right", true));
-        btnRight.addEventListener("touchend", () => handleButtonPress("right", false));
-    </script>
-    
-    
-    
 </body>
 </html>
