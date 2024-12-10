@@ -97,9 +97,7 @@ function createHeadlights(scene) {
 function updateCarMotion() {
     if (!carBody || !carBody.physicsImpostor) return;
 
-    if (!carBody.rotationQuaternion) {
-        carBody.rotationQuaternion = new BABYLON.Quaternion();
-    }
+    console.log("Car Motion Keys:", keys); // Log keys state
 
     // Smooth acceleration and deceleration
     if (keys.backward) { 
@@ -133,6 +131,8 @@ function updateCarMotion() {
         wheel.rotation.x += wheelRotationSpeed; 
     });
 }
+
+
 
 function attachThirdPersonCamera(scene) {
     const camera = new BABYLON.FollowCamera("FollowCamera", new BABYLON.Vector3(0, 5, -10), scene);
