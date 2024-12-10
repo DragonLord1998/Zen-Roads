@@ -1,5 +1,5 @@
-// car.js
-// This module is responsible for creating the car, its wheels, steering wheel, and headlights.
+
+// src/car.js
 
 import { keys } from './controls.js';
 
@@ -19,9 +19,14 @@ let currentSteering = 0;
 function createCar(scene) {
     // Create the car body
     carBody = BABYLON.MeshBuilder.CreateBox("carBody", { width: 2, height: 0.5, depth: 4 }, scene);
+    
+    // Create and apply the car material with texture
     const carMat = new BABYLON.StandardMaterial("carMat", scene);
-    carMat.diffuseColor = BABYLON.Color3.Blue();
+    carMat.diffuseTexture = new BABYLON.Texture("./textures/car.png", scene);
+    carMat.diffuseTexture.uScale = 1; // No horizontal repetition
+    carMat.diffuseTexture.vScale = 1; // No vertical repetition
     carBody.material = carMat;
+
     carBody.position.set(0, 1, 0);
 
     carBody.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -147,4 +152,3 @@ function attachThirdPersonCamera(scene) {
 }
 
 export { createCar, updateCarMotion, attachThirdPersonCamera };
-
