@@ -1,4 +1,4 @@
-/ app.js
+// app.js
 // Main entry point of the application.
 // Sets up the Babylon.js engine, scene, physics, ground, and then creates and updates the car.
 
