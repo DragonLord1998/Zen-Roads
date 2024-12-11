@@ -1,10 +1,11 @@
-
-// src/car.js
+// car.js
+// This module is responsible for creating the car, its wheels, steering wheel, and headlights.
 
 import { keys } from './controls.js';
 
 let carBody; 
 let wheels = []; 
+let steeringWheel; 
 const forwardDir = new BABYLON.Vector3(0, 0, 1);
 
 // Movement parameters
@@ -19,14 +20,11 @@ let currentSteering = 0;
 function createCar(scene) {
     // Create the car body
     carBody = BABYLON.MeshBuilder.CreateBox("carBody", { width: 2, height: 0.5, depth: 4 }, scene);
-    
-    // Create and apply the car material with texture
     const carMat = new BABYLON.StandardMaterial("carMat", scene);
     carMat.diffuseTexture = new BABYLON.Texture("./textures/car.png", scene);
     carMat.diffuseTexture.uScale = 1; // No horizontal repetition
     carMat.diffuseTexture.vScale = 1; // No vertical repetition
     carBody.material = carMat;
-
     carBody.position.set(0, 1, 0);
 
     carBody.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -40,7 +38,7 @@ function createCar(scene) {
     createWheels(scene);
 
     // Add a steering wheel
-    const steeringWheel = BABYLON.MeshBuilder.CreateCylinder("steeringWheel", {
+    steeringWheel = BABYLON.MeshBuilder.CreateCylinder("steeringWheel", {
         diameter: 0.6,
         height: 0.05,
         tessellation: 24
@@ -54,6 +52,9 @@ function createCar(scene) {
 
     // Create headlights
     createHeadlights(scene);
+
+    // Add more shapes to the car
+    addCarDetails(scene);
 
     return carBody;
 }
@@ -99,6 +100,36 @@ function createHeadlights(scene) {
     headlightRight.position.x = 0.7; // Right front of the car
 }
 
+function addCarDetails(scene) {
+    // Add a spoiler
+    const spoiler = BABYLON.MeshBuilder.CreateBox("spoiler", {
+        width: 1.5,
+        height: 0.1,
+        depth: 0.4
+    }, scene);
+    const spoilerMat = new BABYLON.StandardMaterial("spoilerMat", scene);
+    spoilerMat.diffuseColor = BABYLON.Color3.Red();
+    spoiler.material = spoilerMat;
+    spoiler.position.set(0, 1.2, 2.2);
+    spoiler.parent = carBody;
+
+    // Add side mirrors
+    const mirrorMat = new BABYLON.StandardMaterial("mirrorMat", scene);
+    mirrorMat.diffuseColor = BABYLON.Color3.Gray();
+
+    const leftMirror = BABYLON.MeshBuilder.CreateBox("leftMirror", {
+        width: 0.3,
+        height: 0.1,
+        depth: 0.2
+    }, scene);
+    leftMirror.material = mirrorMat;
+    leftMirror.position.set(-1.3, 1, 0.8);
+    leftMirror.parent = carBody;
+
+    const rightMirror = leftMirror.clone("rightMirror");
+    rightMirror.position.x = 1.3;
+}
+
 function updateCarMotion() {
     if (!carBody || !carBody.physicsImpostor) return;
 
@@ -137,6 +168,11 @@ function updateCarMotion() {
     wheels.forEach((wheel) => {
         wheel.rotation.x += wheelRotationSpeed; 
     });
+
+    // Rotate the steering wheel based on steering input
+    if (steeringWheel) {
+        steeringWheel.rotation.y = -currentSteering * Math.PI; // Rotate proportionally to steering
+    }
 }
 
 function attachThirdPersonCamera(scene) {
