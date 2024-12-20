@@ -3,13 +3,29 @@
 // Sets up the Babylon.js engine, scene, physics, ground, and then creates and updates the car.
 
 import { createCar, updateCarMotion, attachThirdPersonCamera } from './car.js';
-
 document.addEventListener("DOMContentLoaded", async function () {
     const canvas = document.getElementById("renderCanvas");
+    let engine;
 
-    // Use the standard Babylon.js Engine for stability
-    const engine = new BABYLON.Engine(canvas, true);
+    try {
+        // Correct WebGPU initialization
+        if (BABYLON.WebGPUEngine && BABYLON.WebGPUEngine.IsSupported()) {
+            engine = new BABYLON.WebGPUEngine(canvas);
+            await engine.initAsync();  // Required for WebGPU initialization
+            console.log("✅ Using WebGPU engine.");
+        } else {
+            engine = new BABYLON.Engine(canvas, true);  // Fallback to WebGL
+            console.log("⚠️ Using WebGL engine.");
+        }
+    } catch (error) {
+        console.error("Error initializing WebGPU:", error);
+        engine = new BABYLON.Engine(canvas, true);  // Fallback to WebGL
+    }
+
     const scene = new BABYLON.Scene(engine);
+
+    
+    scene.debugLayer.show();
 
     // Wait for Ammo.js to be ready
     await Ammo();
